@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
+             xmlns:fmv="clr-namespace:SegaCdFmv.Core"
+             xmlns:local="clr-namespace:SegaCdFmv"
+             x:Class="SegaCdFmv.MainPage"
+             BackgroundColor="#0A0A10">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="8,36,8,6" RowSpacing="6">
+
+        <!-- marquee -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+            <Label Text="MEGA-CD" TextColor="{StaticResource Neon}" FontSize="24" FontAttributes="Bold"
+                   FontFamily="monospace" CharacterSpacing="6" />
+            <Label Grid.Column="1" Text="FMV DECK 1.0" TextColor="{StaticResource Dim}" FontSize="11"
+                   FontFamily="monospace" VerticalOptions="End" />
+        </Grid>
+
+        <!-- disc + LCD clock + CRAM viewer -->
+        <Border Grid.Row="1" BackgroundColor="{StaticResource Panel}" Stroke="#2A2A3C" StrokeThickness="2" Padding="6">
+            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+            <Grid ColumnDefinitions="78,*" ColumnSpacing="8">
+                <skia:SKCanvasView x:Name="DiscView" PaintSurface="OnDiscPaint" HeightRequest="78" />
+                <Grid Grid.Column="1" RowDefinitions="*,24" RowSpacing="4">
+                    <Border Stroke="#00FFCC" StrokeThickness="1" Padding="0">
+                        <skia:SKCanvasView x:Name="LcdView" PaintSurface="OnLcdPaint" />
+                    </Border>
+                    <skia:SKCanvasView Grid.Row="1" x:Name="CramView" PaintSurface="OnCramPaint" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- CRT screen (nearest-neighbour, razor sharp) -->
+        <skia:SKCanvasView Grid.Row="2" x:Name="ScreenView" PaintSurface="OnScreenPaint" HeightRequest="260">
+            <skia:SKCanvasView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnScreenTap" />
+            </skia:SKCanvasView.GestureRecognizers>
+        </skia:SKCanvasView>
+
+        <!-- transport -->
+        <VerticalStackLayout Grid.Row="3" Spacing="5">
+            <ProgressBar x:Name="Bar" ProgressColor="{StaticResource Neon}" BackgroundColor="{StaticResource PanelHi}" />
+            <Label x:Name="StatusLabel" Text="NO DISC" TextColor="{StaticResource Neon}" FontFamily="monospace" FontSize="12" />
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6">
+                <Button x:Name="OpenButton" Grid.Column="0" Text="OPEN" Style="{StaticResource Chunky}" Clicked="OnOpen" />
+                <Button x:Name="PlayButton" Grid.Column="1" Text="PLAY" Style="{StaticResource Chunky}" Clicked="OnPlayPause" />
+                <Button x:Name="StopButton" Grid.Column="2" Text="STOP" Style="{StaticResource Chunky}" Clicked="OnStop" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- categorised quirk deck: collapsible groups -->
+        <CollectionView Grid.Row="4" ItemsSource="{Binding Groups}" x:DataType="local:MainPage"
+                        SelectionMode="None" VerticalScrollBarVisibility="Never">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="fmv:QuirkGroup">
+                    <Border Stroke="{Binding AccentBrush}" StrokeThickness="1" BackgroundColor="{StaticResource Panel}" Margin="0,3" Padding="0">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="6" /></Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,Auto" Padding="12,11" BackgroundColor="{StaticResource PanelHi}">
+                                <Label Text="{Binding Title}" TextColor="{Binding Accent}" FontFamily="monospace"
+                                       FontAttributes="Bold" FontSize="14" CharacterSpacing="2" />
+                                <Label Grid.Column="1" Text="{Binding Arrow}" TextColor="{Binding Accent}" FontSize="14" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleCommand}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                            <VerticalStackLayout IsVisible="{Binding IsExpanded}" Padding="12,4,12,8"
+                                                 BindableLayout.ItemsSource="{Binding Items}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="fmv:QuirkItem">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Padding="0,5">
+                                            <VerticalStackLayout VerticalOptions="Center">
+                                                <Label Text="{Binding Title}" TextColor="White" FontSize="13" />
+                                                <Label Text="{Binding Blurb}" TextColor="{StaticResource Dim}" FontSize="10" />
+                                            </VerticalStackLayout>
+                                            <Switch Grid.Column="1" IsToggled="{Binding IsOn}" IsVisible="{Binding IsSwitch}"
+                                                    OnColor="#00FFCC" ThumbColor="#E8FFF9" VerticalOptions="Center" />
+                                            <Picker Grid.Column="1" ItemsSource="{Binding Options}" SelectedIndex="{Binding SelectedIndex}"
+                                                    IsVisible="{Binding IsPicker}" WidthRequest="124" FontSize="12"
+                                                    TextColor="{StaticResource Neon}" BackgroundColor="{StaticResource PanelHi}"
+                                                    VerticalOptions="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

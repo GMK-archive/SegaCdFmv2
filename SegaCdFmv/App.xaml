@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SegaCdFmv.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Panel">#111119</Color>
+            <Color x:Key="PanelHi">#1B1B2A</Color>
+            <Color x:Key="Neon">#00FFCC</Color>
+            <Color x:Key="NeonBlue">#2E7BFF</Color>
+            <Color x:Key="Dim">#6C7A8C</Color>
+
+            <Style x:Key="Chunky" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource PanelHi}" />
+                <Setter Property="TextColor" Value="{StaticResource Neon}" />
+                <Setter Property="BorderColor" Value="{StaticResource Neon}" />
+                <Setter Property="BorderWidth" Value="2" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontFamily" Value="monospace" />
+                <Setter Property="HeightRequest" Value="46" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
